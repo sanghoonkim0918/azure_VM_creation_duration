@@ -21,7 +21,7 @@ def create_vm(vm_index, resource_group_name, vm_image, vm_size, vm_creation_time
     to when the notification of vm creation is received.
     """
 
-    vm_creation_call = f"vm create --location eastus --resource-group {resource_group_name} --name myVM{vm_index} --image {vm_image} --size {vm_size} --output none"
+    vm_creation_call = f"vm create --location northcentralus --resource-group {resource_group_name} --name myVM{vm_index} --image {vm_image} --size {vm_size} --output none"
 
     print(f"myVM{vm_index} creation starts")
     start_time = time.monotonic()
@@ -81,7 +81,7 @@ if __name__ == '__main__':
         vm_size = "Standard_DS2_v2" # This has 2 vCPUs and RAM of 7 GiB
 
         # 3) Create a resource group
-        az_cli(f"group create --name {resource_group_name} --location eastus --output none")
+        az_cli(f"group create --name {resource_group_name} --location northcentralus --output none")
 
         # 4) Fire Q number of VM creation calls in parallel
         processes = list()
