@@ -58,10 +58,11 @@ if __name__ == '__main__':
     error_counter = 0
 
     for experiment_index in range(500):
-        print(f"\nexperiment_index: {experiment_index}")
+        print("-------------------------------------")
+        print(f"experiment_index: {experiment_index}")
         # 1) Sample Q 
         Q = np.random.randint(1, 51) 
-
+        print(f"Q: {Q}")
         # 2) Declare variables
         if data1.get(Q) is None:
             data1[Q] = dict()
@@ -85,7 +86,7 @@ if __name__ == '__main__':
 
         # 4) Fire Q number of VM creation calls in parallel
         processes = list()
-
+        print(f"{Q} VM creations start!")
         for vm_index in range(Q):
             p = Process(target=create_vm, args=(vm_index, resource_group_name, vm_image, vm_size, vm_creation_time_dict1))
             processes.append(p)
@@ -111,7 +112,7 @@ if __name__ == '__main__':
                 if "virtualMachines" in output_resources[i]['id']:
                     vm_name_index_in_output_resources= i
             
-            vm_name = output_resources[vm_name_index_in_output_resources]['id'].split("virtualMachines/")
+            vm_name = (output_resources[vm_name_index_in_output_resources]['id'].split("virtualMachines/"))[1]
 
             if vm_name[:4] != "myVM":
                 print(f"{vm_name} does not have 'myVM'")
@@ -123,8 +124,23 @@ if __name__ == '__main__':
 
         data0[Q][Q_index] = vm_creation_dict0
 
-        # 6) Delete the resource group 
+        # 6) Delete the resource group
+        print(f"Start deleting the resource group {resource_group_name}")
         az_cli(f"group delete --name {resource_group_name} --yes --output none")
+
+        while True:
+            resource_groups = az_cli("group list")
+            still_exist = False
+            for group in resource_groups:
+                if resource_group_name in group['id']:
+                    still_exist = True
+                    break
+            if not still_exist:
+                print(f"Deleting {resource_group_name} done.")
+                break
+            else:
+                time.sleep(90)
+                
         time.sleep(90)
     
     print(f"\n\n\nerror_counter: {error_counter}")
