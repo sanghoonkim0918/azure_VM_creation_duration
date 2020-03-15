@@ -129,7 +129,7 @@ if __name__ == '__main__':
         az_cli(f"group delete --name {resource_group_name} --yes --output none")
 
         while True:
-            resource_groups = az_cli("group list")
+            resource_groups = az_cli("group list --output none")
             still_exist = False
             for group in resource_groups:
                 if resource_group_name in group['id']:
